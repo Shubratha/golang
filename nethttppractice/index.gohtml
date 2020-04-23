@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Input type submit</title>
+</head>
+<body>
+	{{if .}}
+		<main>
+			<p><strong>variable names</strong> and <strong>values</strong></p>
+			{{range $key, $value := .}}
+				<p><strong>{{$key}}</strong></p>
+				<ul>{{range $value}}<li><em>{{.}}</em></li>{{end}}</ul>
+			{{end}}
+		</main>
+	{{end}}
+
+	<form action="/?fname=gwen" method="POST">
+		<input type="text" name="fname" placeholder="first name">
+		<input type="submit" name="submit-btn" value="button">
+	</form>
+</body>
+</html>
