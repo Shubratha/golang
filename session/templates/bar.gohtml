@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Bar</title>
+	</head>
+	<body>
+		{{if .First}}
+			<h1>Welcome, {{.First}} {{.Last}}. What can i get you?</h1>
+			User Details: <br>
+			USerName: {{.UserName}}<br>
+			First name: {{.First}}<br>
+			Last NAme: {{.Last}}<br>
+		{{else}}
+			<h1>Welcome! New here? Try our chef specials.</h1>
+		{{end}}
+	</body>
+</html>
