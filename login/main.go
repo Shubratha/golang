@@ -12,6 +12,7 @@ type user struct {
 	Password []byte
 	First    string
 	Last     string
+	Role 	 string
 }
 
 var tpl *template.Template
@@ -21,7 +22,7 @@ var dbSessions = map[string]string{}
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
 	bs, _ := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.MinCost)
-	dbUsers["test@test.com"] = user{"test@test.com", bs, "Katniss", "Evedeen"}
+	dbUsers["test@test.com"] = user{"test@test.com", bs, "Katniss", "Evedeen", "admin"}
 }
 
 func main() {
@@ -38,6 +39,12 @@ func bar(w http.ResponseWriter, req *http.Request) {
 	u := getUser(w, req)
 	if !alreadyLoggedIn(req) {
 		http.Redirect(w, req, "/", http.StatusSeeOther)
+		return
+	}
+
+	// restrict users with user role
+	if u.Role != "admin" {
+		http.Error(w, "Forbidden Room; Only admin allowed!", http.StatusForbidden)
 		return
 	}
 	tpl.ExecuteTemplate(w, "bar.gohtml", u)
@@ -59,6 +66,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		p := req.FormValue("password")
 		fn := req.FormValue("firstname")
 		ln := req.FormValue("lastname")
+		role := req.FormValue("role")
 
 		if _, ok := dbUsers[un]; ok {
 			http.Error(w, "Username unavailable", http.StatusForbidden)
@@ -78,7 +86,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 			return
 		}
-		u = user{un, bs, fn, ln}
+		u = user{un, bs, fn, ln, role}
 		dbUsers[un] = u
 
 		http.Redirect(w, req, "/", http.StatusSeeOther)
